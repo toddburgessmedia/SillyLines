@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_reset"
+        android:icon="@drawable/ic_reset"
+        android:title="Reset"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/menu_animate"
+        android:icon="@drawable/ic_animate"
+        android:title="Animate"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/menu_linetype"
+        android:title="Circle"
+        android:icon="@drawable/ic_circle"
+        app:showAsAction="ifRoom"
+        />
+
+</menu>
