@@ -35,6 +35,7 @@ public class MyCustomView extends View {
 
     float x;
     float y;
+    boolean isDrawing = false;
 
     int[] colours = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.GRAY};
 
@@ -79,7 +80,7 @@ public class MyCustomView extends View {
         y = point.y / 2;
 
         points = new ArrayList<>();
-        points.add(new Point((int) x, (int) y));
+        //points.add(new Point((int) x, (int) y));
 
         random = new Random();
 
@@ -87,7 +88,7 @@ public class MyCustomView extends View {
 
     public void clearLines () {
         points.clear();
-        points.add(new Point((int) x, (int) y));
+//        points.add(new Point((int) x, (int) y));
         invalidate();
     }
 
@@ -103,14 +104,40 @@ public class MyCustomView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        x = event.getX();
-        y = event.getY();
-        points.add(new Point((int)x, (int)y));
-        invalidate();
-
-        return super.onTouchEvent(event);
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x = event.getX();
+                y = event.getY();
+                points.add(new Point((int)x, (int)y));
+                isDrawing = true;
+                invalidate();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (isDrawing) {
+                    x = event.getX();
+                    y = event.getY();
+                    points.add(new Point((int)x, (int)y));
+                    invalidate();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (isDrawing) {
+                    x = event.getX();
+                    y = event.getY();
+                    if (lineType == LINE) {
+                        points.add(new Point((int) x, (int) y));
+                    } else {
+                        points.add(new Point(-1, -1));
+                    }
+                    isDrawing = false;
+                    invalidate();
+                }
+                break;
+            default:
+                break;
+        }
+        return true;
     }
-
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -124,15 +151,19 @@ public class MyCustomView extends View {
 
         Point oldp = points.get(0);
         for (Point p : points) {
-            square.setARGB(255,random.nextInt(255),random.nextInt(255),random.nextInt(255));
-            if (lineType == LINE) {
-                canvas.drawLine(oldp.x,oldp.y,p.x,p.y,square);
-            } else {
-                canvas.drawCircle(p.x, p.y, 30, square);
+
+            if ((p.x != -1) && (oldp.x != -1)) {
+                if (!isDrawing) {
+                    square.setARGB(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                }
+                if (lineType == LINE) {
+                    canvas.drawLine(oldp.x, oldp.y, p.x, p.y, square);
+                } else {
+                    canvas.drawCircle(p.x, p.y, 30, square);
+                }
             }
             oldp = p;
         }
-
-
     }
+
 }
