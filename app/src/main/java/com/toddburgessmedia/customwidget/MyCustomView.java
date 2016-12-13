@@ -1,5 +1,6 @@
 package com.toddburgessmedia.customwidget;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -35,13 +36,16 @@ public class MyCustomView extends View {
 
     float x;
     float y;
+    int aRGB;
     boolean isDrawing = false;
+
+    int dropFrame;
 
     int[] colours = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.GRAY};
 
     Random random;
 
-    ArrayList<Point> points;
+    ArrayList<SillyPoint> points;
 
 
     long startTime;
@@ -69,9 +73,6 @@ public class MyCustomView extends View {
         square.setStrokeWidth(50);
         square.setStrokeCap(Paint.Cap.ROUND);
 
-        startTime = System.currentTimeMillis();
-        this.postInvalidate();
-
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point point = new Point();
@@ -80,7 +81,6 @@ public class MyCustomView extends View {
         y = point.y / 2;
 
         points = new ArrayList<>();
-        //points.add(new Point((int) x, (int) y));
 
         random = new Random();
 
@@ -88,12 +88,27 @@ public class MyCustomView extends View {
 
     public void clearLines () {
         points.clear();
-//        points.add(new Point((int) x, (int) y));
         invalidate();
     }
 
     public void animateColours() {
-            postInvalidateDelayed(30);
+
+        ValueAnimator animator = ValueAnimator.ofInt(0, points.size()-1);
+        animator.setDuration(1200);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                           @Override
+                           public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                               aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                               int i = (int) valueAnimator.getAnimatedValue();
+                               if (i < points.size()) {
+                                   points.get(i).aRGB = aRGB;
+                               }
+                               invalidate();
+
+                           }
+                       }
+        );
+        animator.start();
     }
 
     public void setLineType(int lineType) {
@@ -108,7 +123,8 @@ public class MyCustomView extends View {
             case MotionEvent.ACTION_DOWN:
                 x = event.getX();
                 y = event.getY();
-                points.add(new Point((int)x, (int)y));
+                aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                points.add(new SillyPoint((int)x, (int)y, aRGB));
                 isDrawing = true;
                 invalidate();
                 break;
@@ -116,7 +132,8 @@ public class MyCustomView extends View {
                 if (isDrawing) {
                     x = event.getX();
                     y = event.getY();
-                    points.add(new Point((int)x, (int)y));
+                    aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                    points.add(new SillyPoint((int)x, (int)y, aRGB));
                     invalidate();
                 }
                 break;
@@ -125,9 +142,10 @@ public class MyCustomView extends View {
                     x = event.getX();
                     y = event.getY();
                     if (lineType == LINE) {
-                        points.add(new Point((int) x, (int) y));
+                        aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                        points.add(new SillyPoint((int)x, (int)y, aRGB));
                     } else {
-                        points.add(new Point(-1, -1));
+                        points.add(new SillyPoint(-1, -1,0));
                     }
                     isDrawing = false;
                     invalidate();
@@ -149,13 +167,13 @@ public class MyCustomView extends View {
             return;
         }
 
-        Point oldp = points.get(0);
-        for (Point p : points) {
+        SillyPoint oldp = points.get(0);
+        for (SillyPoint p : points) {
 
             if ((p.x != -1) && (oldp.x != -1)) {
-                if (!isDrawing) {
-                    square.setARGB(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
-                }
+                //if (!isDrawing) {
+                    square.setColor(p.aRGB);
+                //}
                 if (lineType == LINE) {
                     canvas.drawLine(oldp.x, oldp.y, p.x, p.y, square);
                 } else {
@@ -166,4 +184,28 @@ public class MyCustomView extends View {
         }
     }
 
+
+
+    class SillyPoint {
+
+        int aRGB;
+        int x;
+        int y;
+
+        public SillyPoint(int x, int y, int aRGB) {
+
+            this.x = x;
+            this.y = y;
+            this.aRGB = aRGB;
+
+        }
+
+        public int getaRGB() {
+            return aRGB;
+        }
+
+        public void setaRGB(int aRGB) {
+            this.aRGB = aRGB;
+        }
+    }
 }
