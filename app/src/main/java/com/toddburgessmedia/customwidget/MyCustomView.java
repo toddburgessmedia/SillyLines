@@ -31,25 +31,16 @@ public class MyCustomView extends View {
     Paint background;
     Paint square;
 
-    int top = 20;
-    int bottom = 30;
-
     float x;
     float y;
     int aRGB;
     boolean isDrawing = false;
 
-    int dropFrame;
-
-    int[] colours = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.GRAY};
+//    int[] colours = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.GRAY};
 
     Random random;
 
     ArrayList<SillyPoint> points;
-
-
-    long startTime;
-    long current;
 
     public MyCustomView (Context context) {
         super(context);
@@ -192,20 +183,12 @@ public class MyCustomView extends View {
         int x;
         int y;
 
-        public SillyPoint(int x, int y, int aRGB) {
+        SillyPoint(int x, int y, int aRGB) {
 
             this.x = x;
             this.y = y;
             this.aRGB = aRGB;
 
-        }
-
-        public int getaRGB() {
-            return aRGB;
-        }
-
-        public void setaRGB(int aRGB) {
-            this.aRGB = aRGB;
         }
     }
 }
