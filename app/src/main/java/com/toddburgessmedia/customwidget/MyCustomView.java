@@ -28,8 +28,8 @@ public class MyCustomView extends View {
 
     Context context;
 
-    Paint background;
-    Paint square;
+    Paint pointer;
+    Paint shape;
 
     float x;
     float y;
@@ -55,14 +55,14 @@ public class MyCustomView extends View {
     }
 
     private void init () {
-        background = new Paint(Paint.ANTI_ALIAS_FLAG);
-        background.setColor(Color.RED);
-        background.setTextSize(122);
+        pointer = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pointer.setColor(Color.RED);
+        pointer.setTextSize(122);
 
-        square = new Paint(Paint.ANTI_ALIAS_FLAG);
-        square.setColor(Color.BLUE);
-        square.setStrokeWidth(50);
-        square.setStrokeCap(Paint.Cap.ROUND);
+        shape = new Paint(Paint.ANTI_ALIAS_FLAG);
+        shape.setColor(Color.BLUE);
+        shape.setStrokeWidth(50);
+        shape.setStrokeCap(Paint.Cap.ROUND);
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -152,7 +152,7 @@ public class MyCustomView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawCircle(x,y,100,background);
+        canvas.drawCircle(x,y,100, pointer);
 
         if (points.size() < 1) {
             return;
@@ -160,22 +160,17 @@ public class MyCustomView extends View {
 
         SillyPoint oldp = points.get(0);
         for (SillyPoint p : points) {
-
             if ((p.x != -1) && (oldp.x != -1)) {
-                //if (!isDrawing) {
-                    square.setColor(p.aRGB);
-                //}
+                shape.setColor(p.aRGB);
                 if (lineType == LINE) {
-                    canvas.drawLine(oldp.x, oldp.y, p.x, p.y, square);
+                    canvas.drawLine(oldp.x, oldp.y, p.x, p.y, shape);
                 } else {
-                    canvas.drawCircle(p.x, p.y, 30, square);
+                    canvas.drawCircle(p.x, p.y, 30, shape);
                 }
             }
             oldp = p;
         }
     }
-
-
 
     class SillyPoint {
 
