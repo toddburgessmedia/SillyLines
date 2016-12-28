@@ -69,7 +69,7 @@ public class MyCustomView extends View {
         Point point = new Point();
         display.getSize(point);
         x = point.x / 2;
-        y = point.y / 2;
+        y = (point.y / 2) - 100;
 
         points = new ArrayList<>();
 
@@ -112,8 +112,7 @@ public class MyCustomView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                x = event.getX();
-                y = event.getY();
+                getCoordinates(event);
                 aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
                 points.add(new SillyPoint((int)x, (int)y, aRGB));
                 isDrawing = true;
@@ -121,8 +120,7 @@ public class MyCustomView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (isDrawing) {
-                    x = event.getX();
-                    y = event.getY();
+                    getCoordinates(event);
                     aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
                     points.add(new SillyPoint((int)x, (int)y, aRGB));
                     invalidate();
@@ -130,8 +128,7 @@ public class MyCustomView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 if (isDrawing) {
-                    x = event.getX();
-                    y = event.getY();
+                    getCoordinates(event);
                     if (lineType == LINE) {
                         aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
                         points.add(new SillyPoint((int)x, (int)y, aRGB));
@@ -146,6 +143,11 @@ public class MyCustomView extends View {
                 break;
         }
         return true;
+    }
+
+    private void getCoordinates(MotionEvent event) {
+        x = event.getX();
+        y = event.getY();
     }
 
     @Override
