@@ -26,21 +26,21 @@ public class MyCustomView extends View {
 
     private int lineType = LINE;
 
-    Context context;
+    private final Context context;
 
-    Paint pointer;
-    Paint shape;
+    private Paint pointer;
+    private Paint shape;
 
-    float x;
-    float y;
-    int aRGB;
-    boolean isDrawing = false;
+    private float x;
+    private float y;
+    private int aRGB;
+    private boolean isDrawing = false;
 
 //    int[] colours = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.GRAY};
 
-    Random random;
+    private Random random;
 
-    ArrayList<SillyPoint> points;
+    private ArrayList<SillyPoint> points;
 
     public MyCustomView (Context context) {
         super(context);
@@ -89,7 +89,7 @@ public class MyCustomView extends View {
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                            @Override
                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                               aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                               aRGB = getRandomArgb();
                                int i = (int) valueAnimator.getAnimatedValue();
                                if (i < points.size()) {
                                    points.get(i).aRGB = aRGB;
@@ -113,16 +113,16 @@ public class MyCustomView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 getCoordinates(event);
-                aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
-                points.add(new SillyPoint((int)x, (int)y, aRGB));
+                aRGB = getRandomArgb();
+                points.add(new SillyPoint(x, y, aRGB));
                 isDrawing = true;
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (isDrawing) {
                     getCoordinates(event);
-                    aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
-                    points.add(new SillyPoint((int)x, (int)y, aRGB));
+                    aRGB = getRandomArgb();
+                    points.add(new SillyPoint(x, y, aRGB));
                     invalidate();
                 }
                 break;
@@ -130,8 +130,8 @@ public class MyCustomView extends View {
                 if (isDrawing) {
                     getCoordinates(event);
                     if (lineType == LINE) {
-                        aRGB = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
-                        points.add(new SillyPoint((int)x, (int)y, aRGB));
+                        aRGB = getRandomArgb();
+                        points.add(new SillyPoint(x, y, aRGB));
                     } else {
                         points.add(new SillyPoint(-1, -1,0));
                     }
@@ -143,6 +143,10 @@ public class MyCustomView extends View {
                 break;
         }
         return true;
+    }
+
+    private int getRandomArgb() {
+        return Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
 
     private void getCoordinates(MotionEvent event) {
@@ -177,13 +181,13 @@ public class MyCustomView extends View {
     class SillyPoint {
 
         int aRGB;
-        int x;
-        int y;
+        final int x;
+        final int y;
 
-        SillyPoint(int x, int y, int aRGB) {
+        SillyPoint(float x, float y, int aRGB) {
 
-            this.x = x;
-            this.y = y;
+            this.x = (int) x;
+            this.y = (int) y;
             this.aRGB = aRGB;
 
         }
